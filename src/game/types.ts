@@ -34,6 +34,7 @@ export interface GameConfig {
 
 export interface HudElements {
   score: HTMLElement;
+  best: HTMLElement;
   lives: HTMLElement;
   level: HTMLElement;
   restartButton: HTMLButtonElement;

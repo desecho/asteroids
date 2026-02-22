@@ -15,7 +15,7 @@ A browser-based Asteroids game built with TypeScript, HTML, and Canvas.
   - Large -> 2 Medium
   - Medium -> 2 Small
   - Small -> destroyed
-- Score, lives, level HUD
+- Score, best score (persisted in `localStorage`), lives, level HUD
 - Ship respawn invulnerability (2s blinking)
 - Game over at 0 lives
 - Restart button

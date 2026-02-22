@@ -12,6 +12,7 @@ function requireElement<T extends HTMLElement>(id: string): T {
 const canvas = requireElement<HTMLCanvasElement>("game-canvas");
 const hud: HudElements = {
   score: requireElement("score"),
+  best: requireElement("best"),
   lives: requireElement("lives"),
   level: requireElement("level"),
   restartButton: requireElement<HTMLButtonElement>("restart"),

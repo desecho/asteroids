@@ -11,6 +11,8 @@ const NEXT_ASTEROID_SIZE: Record<AsteroidSize, AsteroidSize | null> = {
   small: null,
 };
 
+const BEST_SCORE_STORAGE_KEY = "asteroids.bestScore";
+
 const DEFAULT_CONFIG: GameConfig = {
   fixedTimeStep: 1 / 120,
   maxFrameTime: 0.25,
@@ -44,6 +46,7 @@ export class Game {
   private bullets: Bullet[] = [];
   private asteroids: Asteroid[] = [];
   private score = 0;
+  private bestScore = 0;
   private lives = 3;
   private level = 1;
   private gameOver = false;
@@ -66,6 +69,7 @@ export class Game {
     this.config = config;
     this.input = new Input(window);
     this.ship = new Ship(this.getWorldCenter(), this.config.shipRadius);
+    this.bestScore = this.loadBestScore();
 
     this.hud.restartButton.addEventListener("click", this.onRestart);
   }
@@ -218,6 +222,7 @@ export class Game {
         this.bullets.splice(bulletIndex, 1);
         this.asteroids.splice(asteroidIndex, 1);
         this.score += this.config.asteroidBySize[asteroid.size].score;
+        this.updateBestScore();
         spawnedChildren.push(...this.splitAsteroid(asteroid));
         break;
       }
@@ -367,8 +372,39 @@ export class Game {
     return { x: this.canvas.width / 2, y: this.canvas.height / 2 };
   }
 
+  private loadBestScore(): number {
+    try {
+      const value = window.localStorage.getItem(BEST_SCORE_STORAGE_KEY);
+      if (!value) {
+        return 0;
+      }
+
+      const parsed = Number.parseInt(value, 10);
+      if (!Number.isFinite(parsed) || parsed < 0) {
+        return 0;
+      }
+      return parsed;
+    } catch {
+      return 0;
+    }
+  }
+
+  private updateBestScore(): void {
+    if (this.score <= this.bestScore) {
+      return;
+    }
+
+    this.bestScore = this.score;
+    try {
+      window.localStorage.setItem(BEST_SCORE_STORAGE_KEY, `${this.bestScore}`);
+    } catch {
+      // Ignore storage errors (for example, privacy mode or blocked storage).
+    }
+  }
+
   private updateHud(): void {
     this.hud.score.textContent = `${this.score}`;
+    this.hud.best.textContent = `${this.bestScore}`;
     this.hud.lives.textContent = `${this.lives}`;
     this.hud.level.textContent = `${this.level}`;
   }
